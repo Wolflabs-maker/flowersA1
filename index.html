@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFFY | Flowers - Miley Cyrus (A1)</title>
+    <!-- Tailwind CSS with "Empowerment Rose" Palette Configured -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'spotify-green': '#1DB954',
+                        'spotify-black': '#121212',
+                        'spotify-base': '#000000',
+                        'spotify-surface': '#181818',
+                        'spotify-surface-hover': '#282828',
+                        'spotify-text-base': '#a7a7a7',
+                        'spotify-text-highlight': '#ffffff',
+                        'lyric-bg': '#2e1021', /* Deep rose/burgundy for emotional depth */
+                        'miley-rose': '#f43f5e', /* Vibrant rose pink */
+                        'miley-rose-hover': '#e11d48',
+                        'miley-gold': '#fbbf24' /* Golden empowerment */
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --spotify-base: #000000;
+            --spotify-surface: #181818;
+            --spotify-surface-hover: #282828;
+            --spotify-text-base: #a7a7a7;
+            --spotify-text-highlight: #ffffff;
+            --lyric-bg: #2e1021; 
+            --miley-rose: #f43f5e;
+            --miley-gold: #fbbf24;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--spotify-base);
+            color: var(--spotify-text-base);
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main Structure */
+        .app-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            height: calc(100vh - 90px);
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--spotify-base);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 12px;
+            flex-shrink: 0;
+        }
+
+        .main-view {
+            flex: 1;
+            /* Gradient inspired by a vibrant sunset/rose aesthetic */
+            background: linear-gradient(180deg, #4c0519 0%, #000000 100%);
+            border-radius: 12px;
+            margin: 8px 8px 0 0;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .player-bar {
+            height: 90px;
+            background-color: var(--spotify-surface);
+            border-top: 1px solid #282828;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 50;
+        }
+        
+        /* Navigation */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px;
+            color: var(--spotify-text-base);
+            font-weight: 700;
+            font-size: 14px;
+            transition: color 0.2s;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .nav-item:hover { color: var(--spotify-text-highlight); }
+        .nav-item.active { color: var(--spotify-text-highlight); background-color: var(--spotify-surface-hover); border-left: 3px solid var(--miley-rose); }
+
+        /* Buttons */
+        .play-btn-large {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--miley-rose);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            box-shadow: 0 8px 15px rgba(244, 63, 94, 0.3);
+        }
+        .play-btn-large:hover { background-color: #e11d48; transform: scale(1.08); box-shadow: 0 12px 20px rgba(244, 63, 94, 0.5); }
+
+        /* Glowing Confirm Button (Rose) */
+        .btn-confirm-glow {
+            background-color: var(--miley-rose);
+            color: white;
+            font-weight: 900;
+            padding: 16px 40px;
+            border-radius: 500px;
+            text-transform: uppercase;
+            font-size: 16px;
+            letter-spacing: 2px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .btn-confirm-glow:hover {
+            background-color: #e11d48;
+            color: white;
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 30px rgba(244, 63, 94, 0.6);
+        }
+        .btn-confirm-glow:disabled {
+            background-color: #333;
+            color: #666;
+            box-shadow: none;
+            transform: none;
+            cursor: not-allowed;
+        }
+        
+        @keyframes pulse-rose-glow {
+            0% { box-shadow: 0 0 10px rgba(244, 63, 94, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(244, 63, 94, 0.8); }
+            100% { box-shadow: 0 0 10px rgba(244, 63, 94, 0.4); }
+        }
+        .animate-pulse-rose-glow { animation: pulse-rose-glow 2s infinite ease-in-out; }
+
+        /* Absolute Success Class */
+        .bg-success-glow {
+            background-color: #10b981 !important; /* Emerald green */
+            color: black !important;
+            border-color: #10b981 !important;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.8) !important;
+            transition: all 0.3s ease !important;
+        }
+        .bg-success-glow p, .bg-success-glow span, .bg-success-glow div, .bg-success-glow i, .bg-success-glow h3 { 
+            color: black !important; 
+            text-shadow: none !important;
+        }
+
+        /* Error Class */
+        .bg-error-glow {
+            background-color: #ef4444 !important;
+            color: white !important;
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.8) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        /* Lyric Visual Elements */
+        .lyric-line {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        @media (max-width: 768px) { .lyric-line { font-size: 1.8rem; } }
+        
+        .lyric-inactive { color: rgba(255, 255, 255, 0.3); }
+        .lyric-active { color: var(--spotify-text-highlight); text-shadow: 0 4px 20px rgba(244, 63, 94, 0.3); }
+        
+        .lyric-blank {
+            display: inline-block;
+            min-width: 140px;
+            border-bottom: 4px solid var(--miley-rose);
+            color: var(--miley-rose);
+            text-align: center;
+            padding: 0 10px;
+            margin: 0 5px;
+            transition: all 0.3s;
+            border-radius: 8px;
+        }
+        .lyric-blank.filled {
+            border-bottom-color: var(--miley-rose);
+            text-shadow: 0 0 20px rgba(244, 63, 94, 0.6);
+            color: white;
+        }
+
+        /* Option Pills Style */
+        .option-pill {
+            background: rgba(0,0,0,0.6);
+            border: 2px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+        .option-pill:hover {
+            background: rgba(244, 63, 94, 0.15);
+            border-color: var(--miley-rose);
+            transform: translateY(-2px);
+        }
+        .option-pill.selected {
+            background: var(--miley-rose);
+            color: white;
+            border-color: var(--miley-rose);
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.5);
+        }
+
+        /* Hide Scrollbar for tabs */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Immersive View for Capsules */
+        .immersive-view {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 90px;
+            background: linear-gradient(180deg, var(--lyric-bg) 0%, #000000 100%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.3, 0, 0, 1);
+        }
+        .immersive-view.active { transform: translateY(0); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(244, 63, 94, 0.5); }
+
+        /* Player Progress Bar */
+        .progress-bar { width: 100%; height: 4px; background: #333; border-radius: 2px; cursor: pointer; position: relative; }
+        .progress-fill { height: 100%; background: var(--spotify-text-highlight); border-radius: 2px; width: 0%; transition: width 0.1s linear; }
+        .progress-bar:hover .progress-fill { background: var(--miley-rose); }
+        .progress-bar:hover .progress-fill::after {
+            content: ''; position: absolute; right: -5px; top: -4px; width: 12px; height: 12px;
+            background: white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <!-- MAIN CONTAINER -->
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <nav class="sidebar">
+            <div class="mb-8 px-3 text-white flex items-center gap-2">
+                <div class="w-8 h-8 bg-miley-rose rounded-full flex items-center justify-center text-white font-black italic text-lg shadow-[0_0_15px_rgba(244,63,94,0.5)]">W</div>
+                <span class="text-2xl font-black tracking-tighter">WOLFFY</span>
+            </div>
+            <ul class="space-y-2">
+                <li class="nav-item active"><i class="fa-solid fa-house text-xl w-6"></i> Home</li>
+                <li class="nav-item"><i class="fa-solid fa-magnifying-glass text-xl w-6"></i> Search</li>
+                <li class="nav-item"><i class="fa-solid fa-book-open text-xl w-6"></i> Your Library</li>
+            </ul>
+            <div class="mt-8 pt-6 border-t border-slate-800">
+                <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 px-3">Study Playlists</p>
+                <ul class="space-y-3 px-3 text-sm font-semibold">
+                    <li class="text-white cursor-pointer transition">A1 - Miley Cyrus (Flowers)</li>
+                    <li class="hover:text-white cursor-pointer transition text-slate-500">A1 - Eric Clapton (Heaven)</li>
+                    <li class="hover:text-white cursor-pointer transition text-slate-500">A2 - Creed (Higher)</li>
+                    <li class="hover:text-white cursor-pointer transition text-slate-500">B1 - My Chemical Romance</li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- MAIN AREA -->
+        <main class="main-view shadow-2xl" id="main-dashboard">
+            <!-- Header Album Cover Style -->
+            <div class="p-8 pt-16 flex flex-col md:flex-row items-end gap-6 bg-gradient-to-t from-black/90 to-transparent">
+                <div class="w-48 h-48 md:w-60 md:h-60 shadow-[0_15px_40px_rgba(244,63,94,0.2)] flex-shrink-0 group relative overflow-hidden bg-slate-900 rounded-xl border border-rose-900/50">
+                    <!-- Image of Flowers -->
+                    <div class="w-full h-full flex flex-col items-center justify-center text-center p-4 bg-cover bg-blend-overlay bg-slate-900/40 group-hover:bg-slate-900/20 transition-all duration-700" style="background-image: url('https://images.unsplash.com/photo-1563241527-3004b7be0ffd?auto=format&fit=crop&w=600&q=80');">
+                        <span class="text-[10px] font-bold text-miley-gold tracking-[0.3em] mb-2 uppercase drop-shadow-md">WOLFFY A1</span>
+                        <h2 class="text-3xl font-black text-white italic tracking-tighter shadow-black drop-shadow-lg leading-tight">BUY MYSELF<br><span class="text-miley-rose">FLOWERS</span></h2>
+                        <span class="text-gray-300 font-bold text-[8px] mt-4 uppercase tracking-widest"></span>
+                    </div>
+                    <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fa-solid fa-play text-5xl text-white"></i>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 pb-2">
+                    <span class="text-sm font-bold tracking-widest uppercase text-white"><i class="fa-solid fa-seedling text-miley-rose mr-1"></i> Interactive Masterclass • A1</span>
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white mb-2 leading-none drop-shadow-lg">Flowers</h1>
+                    <div class="flex items-center gap-3 text-sm font-bold flex-wrap">
+                        <div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center border border-slate-600"><i class="fa-solid fa-microphone text-[10px] text-gray-300"></i></div>
+                        <span class="text-white hover:underline cursor-pointer">Miley Cyrus</span>
+                        <span class="text-gray-400">• Theme: Independence & Self-Love</span>
+                        <span class="text-miley-rose font-bold">• Focus: "Can" for Self-Care</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-8 mt-6">
+                <p class="text-lg md:text-xl text-gray-300 leading-relaxed font-medium max-w-4xl shadow-black drop-shadow-lg border-l-4 border-miley-rose pl-4">
+                    Celebrate self-love and independence! 
+                    In this 25-capsule Masterclass, you will learn how to express your abilities and self-care routines using <span class="text-white font-bold italic">the modal verb "Can"</span> and the Simple Present.
+                </p>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="px-8 py-6 flex items-center gap-6 mt-2">
+                <div class="play-btn-large" onclick="startMasterclass()">
+                    <i class="fa-solid fa-play ml-1"></i>
+                </div>
+                <i class="fa-regular fa-heart text-3xl text-slate-400 cursor-pointer transition hover:text-white hover:scale-110"></i>
+                <i class="fa-solid fa-ellipsis text-2xl text-slate-500 hover:text-white cursor-pointer transition"></i>
+            </div>
+
+            <!-- CATEGORY TABS -->
+            <div class="px-8 mt-2">
+                <div class="flex gap-3 overflow-x-auto pb-4 scrollbar-hide" id="tabs-container">
+                    <!-- Tabs Injected via JS -->
+                </div>
+            </div>
+
+            <!-- CAPSULE GRID -->
+            <div class="px-8 pb-20 pt-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="capsules-container">
+                    <!-- Cards Injected via JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- IMMERSIVE CAPSULE VIEW -->
+        <div class="immersive-view" id="exercise-view">
+            <header class="p-6 flex justify-between items-center bg-transparent z-10 border-b border-white/5">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-black/60 rounded-xl flex items-center justify-center shadow-lg border border-rose-900/50 backdrop-blur-sm" id="ex-icon-container">
+                        <i class="fa-solid fa-music text-miley-rose text-xl" id="ex-header-icon"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] uppercase font-bold tracking-widest text-miley-rose mb-0.5" id="ex-subtitle">MODULE TYPE</p>
+                        <h2 class="text-xl font-bold text-white tracking-tight" id="ex-title">Capsule Title</h2>
+                    </div>
+                </div>
+                <button onclick="closeExercise()" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 text-white transition backdrop-blur-md">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </header>
+
+            <!-- pb-32 garante que o conteúdo termine em segurança acima da barra flutuante -->
+            <div class="flex-grow flex flex-col p-8 pb-32 overflow-y-auto relative" id="exercise-content">
+                <!-- Content Injected via JS -->
+            </div>
+
+            <!-- Floating Feedback Bar -->
+            <div id="feedback-bar" class="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-[90%] max-w-3xl py-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-50 flex items-center justify-between px-6 transition-all duration-400 ease-out border-2 opacity-0 translate-y-12 pointer-events-none backdrop-blur-xl">
+                <!-- Feedback Injected -->
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM PLAYER -->
+    <div class="player-bar">
+        <div class="flex items-center gap-4 w-1/3">
+            <div class="w-14 h-14 bg-slate-900 rounded shadow flex items-center justify-center text-slate-500 overflow-hidden border border-slate-700">
+                <div class="w-full h-full bg-cover bg-center opacity-80" style="background-image: url('https://images.unsplash.com/photo-1563241527-3004b7be0ffd?auto=format&fit=crop&w=100&q=80');"></div>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-sm font-bold text-white hover:underline cursor-pointer">Flowers (A1)</span>
+                <span class="text-xs text-slate-400 hover:underline cursor-pointer">Miley Cyrus</span>
+            </div>
+            <i class="fa-solid fa-heart text-spotify-green cursor-pointer ml-4"></i>
+        </div>
+
+        <div class="flex flex-col items-center justify-center w-1/3 gap-2">
+            <div class="flex items-center gap-6 text-slate-400">
+                <i class="fa-solid fa-shuffle hover:text-white cursor-pointer transition"></i>
+                <i class="fa-solid fa-backward-step hover:text-white cursor-pointer transition text-xl"></i>
+                <div class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center cursor-pointer hover:scale-105 transition shadow-[0_0_10px_rgba(241,245,249,0.3)]" onclick="toggleGlobalPlay()">
+                    <i class="fa-solid fa-play ml-0.5" id="global-play-icon"></i>
+                </div>
+                <i class="fa-solid fa-forward-step hover:text-white cursor-pointer transition text-xl"></i>
+                <i class="fa-solid fa-repeat text-miley-rose cursor-pointer transition"></i>
+            </div>
+            <div class="flex items-center gap-2 w-full max-w-md text-xs text-slate-400 font-mono">
+                <span id="player-time-current">0:00</span>
+                <div class="progress-bar group">
+                    <div class="progress-fill group-hover:bg-white" id="player-progress"></div>
+                </div>
+                <span>3:20</span>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 w-1/3 text-slate-400">
+            <i class="fa-solid fa-microphone text-miley-rose cursor-pointer transition" title="Capsule Mode Active"></i>
+            <i class="fa-solid fa-list-ul hover:text-white cursor-pointer transition"></i>
+            <i class="fa-solid fa-volume-high hover:text-white cursor-pointer transition"></i>
+            <div class="w-24 h-1 bg-slate-700 rounded-full cursor-pointer"><div class="w-1/2 h-full bg-white rounded-full hover:bg-white"></div></div>
+        </div>
+    </div>
+
+    <!-- MÓDULOS A1 (MILEY CYRUS) COM 25 EXERCÍCIOS CATEGORIZADOS E AVANÇO MANUAL -->
+    <script>
+        // Define the 5 Acts (Categories)
+        const categories = [
+            { id: 1, name: 'Act I: Independence', icon: 'fa-person-walking' },
+            { id: 2, name: 'Act II: "I Can"', icon: 'fa-star' },
+            { id: 3, name: 'Act III: Simple Habits', icon: 'fa-calendar-day' },
+            { id: 4, name: 'Act IV: Self-Care', icon: 'fa-spa' },
+            { id: 5, name: 'Act V: Empowerment', icon: 'fa-fire-flame-curved' }
+        ];
+
+        let currentCategory = 1;
+
+        // Array with 25 A1 Level Exercises (Miley Cyrus - "Can" & Simple Present)
+        const modules = [
+            // ACT 1: Independence
+            { act: 1, id: 'cap-1', title: 'The Past', desc: 'Listen to the opening lyrics and complete the verse.', tag: 'Spotify Lyrics', icon: 'fa-headphones', type: 'lyrics', lines: [ { text: "We were good, we were ____", active: true, target: "gold" }, { text: "Kind of dream that can't be sold", active: false } ], options: ["gold", "old", "cold", "bold"] },
+            { act: 1, id: 'cap-2', title: 'Vocab: Gold', desc: 'Understand a key word from the song.', tag: 'Meaning Lab', icon: 'fa-coins', type: 'vocab', question: "In the song, what does 'we were gold' mean?", options: [ { text: "We were very good and valuable together.", correct: true }, { text: "We were made of metal.", correct: false }, { text: "We had a lot of money.", correct: false } ] },
+            { act: 1, id: 'cap-3', title: 'Grammar Context', desc: 'Identify the tense in the first line.', tag: 'A1 Grammar', icon: 'fa-clock-rotate-left', type: 'grammar', question: "The word 'were' shows that the relationship is in the...", options: [ { text: "Past", correct: true }, { text: "Present", correct: false }, { text: "Future", correct: false } ] },
+            { act: 1, id: 'cap-4', title: 'Being Alone', desc: 'Talk about independence.', tag: 'Speaking Arena', icon: 'fa-user', type: 'arena', prompt: "Is it good to do things alone sometimes?", director: "Share your opinion using 'I think...'", starters: [ "I think doing things alone is good because...", "I think it is relaxing to...", "Sometimes, I prefer to..." ] },
+            { act: 1, id: 'cap-5', title: 'Moving On', desc: 'Complete the lyrics about leaving the past.', tag: 'Spotify Lyrics', icon: 'fa-music', type: 'lyrics', lines: [ {text: "I didn't want to ____ you", active: true, target: "leave"}, {text: "I didn't wanna lie", active: false} ], options: ["leave", "love", "see", "meet"] },
+
+            // ACT 2: "I Can"
+            { act: 2, id: 'cap-6', title: 'Using Can', desc: 'Learn how to construct a simple sentence.', tag: 'A1 Grammar', icon: 'fa-pencil', type: 'grammar', question: "What does 'can' express in this song?", options: [ {text: "Ability and independence (I am able to do it).", correct: true}, {text: "A habit (I do it every day).", correct: false}, {text: "An obligation (I have to do it).", correct: false} ] },
+            { act: 2, id: 'cap-7', title: 'The Famous Chorus', desc: 'Fill in the empowering word.', tag: 'A1 Grammar', icon: 'fa-seedling', type: 'grammar', question: "Complete the sentence: 'I ____ buy myself flowers.'", options: [ {text: "can", correct: true}, {text: "do", correct: false}, {text: "am", correct: false} ] },
+            { act: 2, id: 'cap-8', title: 'Writing in the Sand', desc: 'Complete the lyrics.', tag: 'Spotify Lyrics', icon: 'fa-headphones', type: 'lyrics', lines: [ {text: "Write my name in the ____", active: true, target: "sand"}, {text: "Talk to myself for hours", active: false} ], options: ["sand", "hand", "land", "book"] },
+            { act: 2, id: 'cap-9', title: 'Vocab: Sand', desc: 'Learn a nature word.', tag: 'Meaning Lab', icon: 'fa-umbrella-beach', type: 'vocab', question: "Where do you usually find 'sand'?", options: [ {text: "At the beach.", correct: true}, {text: "In the sky.", correct: false}, {text: "In a car.", correct: false} ] },
+            { act: 2, id: 'cap-10', title: 'Your Abilities', desc: 'What can you do?', tag: 'Speaking Arena', icon: 'fa-star', type: 'arena', prompt: "What is something fun you CAN do very well?", director: "Use 'I can...' to talk about your ability.", starters: [ "I can cook very well.", "I can play a sport like...", "I can speak a little English." ] },
+
+            // ACT 3: Simple Habits
+            { act: 3, id: 'cap-11', title: 'Habit vs Ability', desc: 'Understand the difference.', tag: 'A1 Grammar', icon: 'fa-code-compare', type: 'grammar', question: "Which sentence shows a HABIT (something you do regularly)?", options: [ {text: "I dance every weekend.", correct: true}, {text: "I can dance.", correct: false}, {text: "I am dancing now.", correct: false} ] },
+            { act: 3, id: 'cap-12', title: 'Taking Myself', desc: 'Complete the lyrics.', tag: 'Spotify Lyrics', icon: 'fa-music', type: 'lyrics', lines: [ {text: "I can take myself ____", active: true, target: "dancing"}, {text: "And I can hold my own hand", active: false} ], options: ["dancing", "walking", "sleeping", "shopping"] },
+            { act: 3, id: 'cap-13', title: 'Negative Forms', desc: 'How to say "no".', tag: 'A1 Grammar', icon: 'fa-minus', type: 'grammar', question: "What is the correct negative form for a habit?", options: [ {text: "I do not cry.", correct: true}, {text: "I not cry.", correct: false}, {text: "I don't can cry.", correct: false} ] },
+            { act: 3, id: 'cap-14', title: 'Your Habits', desc: 'Talk about your routine.', tag: 'Speaking Arena', icon: 'fa-calendar-check', type: 'arena', prompt: "What is one good habit you have for yourself?", director: "Use the Simple Present to describe your routine.", starters: [ "I exercise every morning.", "I read a book before bed.", "I drink a lot of water." ] },
+            { act: 3, id: 'cap-15', title: 'Hold My Hand', desc: 'Complete the chorus.', tag: 'Spotify Lyrics', icon: 'fa-headphones', type: 'lyrics', lines: [ {text: "And I can hold my own ____", active: true, target: "hand"}, {text: "Yeah, I can love me better than you can", active: false} ], options: ["hand", "head", "bag", "heart"] },
+
+            // ACT 4: Self-Care
+            { act: 4, id: 'cap-16', title: 'Vocab: Hold my own hand', desc: 'Understand the metaphor.', tag: 'Meaning Lab', icon: 'fa-handshake-angle', type: 'vocab', question: "What does 'hold my own hand' mean in this song?", options: [ {text: "To be independent and support yourself.", correct: true}, {text: "To wash your hands.", correct: false}, {text: "To wear a glove.", correct: false} ] },
+            { act: 4, id: 'cap-17', title: 'Questions with Can', desc: 'Ask about ability.', tag: 'A1 Grammar', icon: 'fa-question', type: 'grammar', question: "How do you ask a question using 'can'?", options: [ {text: "Can you buy flowers?", correct: true}, {text: "You can buy flowers?", correct: false}, {text: "Do you can buy flowers?", correct: false} ] },
+            { act: 4, id: 'cap-18', title: 'Loving Better', desc: 'Complete the empowering line.', tag: 'Spotify Lyrics', icon: 'fa-music', type: 'lyrics', lines: [ {text: "Yeah, I can love me ____", active: true, target: "better"}, {text: "Than you can", active: false} ], options: ["better", "good", "more", "much"] },
+            { act: 4, id: 'cap-19', title: 'Showing Love', desc: 'How do you care for yourself?', tag: 'Speaking Arena', icon: 'fa-heart', type: 'arena', prompt: "How do you show love to yourself?", director: "Give examples of your self-care routine.", starters: [ "I show love to myself by sleeping 8 hours.", "I can buy myself a coffee.", "I like to relax and watch a movie." ] },
+            { act: 4, id: 'cap-20', title: 'Vocab: Better', desc: 'A comparative word.', tag: 'Meaning Lab', icon: 'fa-arrow-up-right-dots', type: 'vocab', question: "The word 'better' means...", options: [ {text: "More good; of higher quality.", correct: true}, {text: "Very bad.", correct: false}, {text: "The same.", correct: false} ] },
+
+            // ACT 5: Empowerment
+            { act: 5, id: 'cap-21', title: 'Than You Can', desc: 'Finish the famous line.', tag: 'Spotify Lyrics', icon: 'fa-microphone', type: 'lyrics', lines: [ {text: "Yeah, I can love me better", active: false}, {text: "Than you ____", active: true, target: "can"} ], options: ["can", "do", "are", "will"] },
+            { act: 5, id: 'cap-22', title: 'Grammar Rules', desc: 'Verbs after can.', tag: 'A1 Grammar', icon: 'fa-check', type: 'grammar', question: "Which sentence is correct?", options: [ {text: "I can buy flowers.", correct: true}, {text: "I can to buy flowers.", correct: false}, {text: "I can buying flowers.", correct: false} ] },
+            { act: 5, id: 'cap-23', title: 'Vocab: Flowers', desc: 'The symbol of the song.', tag: 'Meaning Lab', icon: 'fa-fan', type: 'vocab', question: "In this song, buying 'flowers' represents...", options: [ {text: "Treating yourself well and not waiting for someone else to do it.", correct: true}, {text: "Being a gardener.", correct: false}, {text: "Spending all your money.", correct: false} ] },
+            { act: 5, id: 'cap-24', title: 'Treat Yourself', desc: 'Use your new skills.', tag: 'Speaking Arena', icon: 'fa-gift', type: 'arena', prompt: "What is one nice thing you CAN buy or do for yourself this week?", director: "Use 'I can...' to state your action.", starters: [ "I can buy myself a new book.", "I can take myself to the park.", "I can make my favorite dinner." ] },
+            { act: 5, id: 'cap-25', title: 'Final Reflection', desc: 'Your self-care journey.', tag: 'Speaking Arena', icon: 'fa-crown', type: 'arena', prompt: "What did you learn today about independence?", director: "Reflect on the message of the song and your English skills.", starters: [ "I learned that I can...", "I think it is important to...", "My favorite part of the song is..." ] }
+        ];
+
+        let currentModuleIndex = 0;
+        let isPlaying = false;
+        let progressInterval;
+        let selectedLyricWord = null;
+        let currentLyricLineIndex = 0;
+
+        function renderTabs() {
+            const tabsContainer = document.getElementById('tabs-container');
+            tabsContainer.innerHTML = categories.map(cat => `
+                <button onclick="selectCategory(${cat.id})" class="flex-shrink-0 px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 border ${currentCategory === cat.id ? 'bg-miley-rose text-white border-miley-rose shadow-[0_0_15px_rgba(244,63,94,0.5)]' : 'bg-black/40 text-slate-400 border-slate-700 hover:bg-slate-800 hover:text-white'}">
+                    <i class="fa-solid ${cat.icon} mr-2"></i> ${cat.name}
+                </button>
+            `).join('');
+        }
+
+        function selectCategory(id) {
+            currentCategory = id;
+            renderTabs();
+            renderCapsules();
+        }
+
+        function renderCapsules() {
+            const container = document.getElementById('capsules-container');
+            
+            // Filter modules by Act
+            const filteredHtml = modules.map((mod, index) => {
+                if (mod.act !== currentCategory) return '';
+
+                const isCompleted = mod.completed;
+                const borderClass = isCompleted ? 'border-emerald-500/70' : 'border-rose-900 hover:border-miley-rose/50';
+                const iconBgClass = isCompleted ? 'bg-emerald-500 text-black' : 'bg-black/40 text-miley-rose group-hover:bg-miley-rose group-hover:text-white';
+                const checkMark = isCompleted ? '<div class="absolute top-4 right-4 text-emerald-500 animate-fade-in"><i class="fa-solid fa-circle-check text-xl"></i></div>' : '';
+                
+                return `
+                <div class="bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 border ${borderClass} rounded-2xl p-6 cursor-pointer transition-all duration-300 group flex flex-col h-full shadow-lg hover:shadow-[0_0_20px_rgba(244,63,94,0.15)] relative overflow-hidden animate-fade-in" onclick="startModule(${index})">
+                    
+                    ${checkMark}
+                    <!-- Decorative background glow -->
+                    <div class="absolute -right-6 -top-6 w-32 h-32 bg-rose-500/5 rounded-full blur-3xl group-hover:bg-rose-500/15 transition-colors"></div>
+
+                    <div class="w-12 h-12 rounded-xl ${iconBgClass} flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-all shadow-md border border-rose-800">
+                        <i class="fa-solid ${mod.icon}"></i>
+                    </div>
+                    
+                    <h3 class="text-white font-black text-xl mb-2 tracking-tight">${mod.title}</h3>
+                    <p class="text-slate-400 text-sm mb-8 flex-grow leading-relaxed">${mod.desc}</p>
+                    
+                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-slate-800">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-black/60 px-3 py-1.5 rounded border border-slate-800">${mod.tag}</span>
+                        <div class="w-8 h-8 rounded-full ${isCompleted ? 'bg-emerald-500 text-black' : 'bg-miley-rose text-white'} flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 shadow-lg">
+                            <i class="fa-solid ${isCompleted ? 'fa-check' : 'fa-play ml-0.5'} text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            container.innerHTML = filteredHtml;
+        }
+
+        function toggleGlobalPlay() {
+            const icon = document.getElementById('global-play-icon');
+            const progress = document.getElementById('player-progress');
+            const timeDisplay = document.getElementById('player-time-current');
+            
+            isPlaying = !isPlaying;
+            
+            if (isPlaying) {
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
+                
+                let width = parseFloat(progress.style.width) || 0;
+                let seconds = 0;
+                
+                progressInterval = setInterval(() => {
+                    width += 0.05;
+                    seconds += 0.15; 
+                    if (width > 100) width = 0;
+                    progress.style.width = width + '%';
+                    
+                    const m = Math.floor(seconds / 60);
+                    const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+                    timeDisplay.innerText = `${m}:${s}`;
+                }, 100);
+            } else {
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
+                clearInterval(progressInterval);
+            }
+        }
+
+        function startMasterclass() {
+            selectCategory(1);
+            startModule(0);
+            if(!isPlaying) toggleGlobalPlay();
+        }
+
+        function startModule(index) {
+            currentModuleIndex = index;
+            const module = modules[index];
+            
+            document.getElementById('ex-subtitle').innerText = module.tag;
+            document.getElementById('ex-title').innerText = module.title;
+            document.getElementById('ex-header-icon').className = `fa-solid ${module.icon} text-miley-rose text-xl`;
+            
+            document.getElementById('exercise-view').classList.add('active');
+            
+            renderQuestion();
+        }
+
+        function closeExercise() {
+            document.getElementById('exercise-view').classList.remove('active');
+            hideFeedback();
+        }
+
+        function nextModule() {
+            if(currentModuleIndex + 1 < modules.length) {
+                const nextIndex = currentModuleIndex + 1;
+                const nextAct = modules[nextIndex].act;
+                
+                if (currentCategory !== nextAct) {
+                    selectCategory(nextAct);
+                }
+                
+                startModule(nextIndex);
+            } else {
+                closeExercise();
+            }
+        }
+
+        function renderQuestion() {
+            const module = modules[currentModuleIndex];
+            const content = document.getElementById('exercise-content');
+            content.innerHTML = '';
+            hideFeedback();
+
+            if (module.type === 'lyrics') renderSpotifyLyrics(module);
+            if (module.type === 'vocab' || module.type === 'grammar') renderQuiz(module);
+            if (module.type === 'arena') renderArena(module);
+        }
+
+        // --- CAPSULE TYPE: LYRICS ---
+        function renderSpotifyLyrics(module) {
+            selectedLyricWord = null;
+            
+            currentLyricLineIndex = module.lines.findIndex(l => l.active && !l.solved);
+            
+            if (currentLyricLineIndex === -1) {
+                finishModule();
+                return;
+            }
+
+            const activeLine = module.lines[currentLyricLineIndex];
+            const content = document.getElementById('exercise-content');
+            
+            let lyricsHtml = module.lines.map((line, idx) => {
+                if (line.active) {
+                    const parts = line.text.split('____');
+                    if (line.solved) {
+                        return `<div class="lyric-line lyric-inactive my-4">${parts[0]} <span class="text-miley-rose drop-shadow-md">${line.target}</span> ${parts[1] || ''}</div>`;
+                    } else if (idx === currentLyricLineIndex) {
+                        return `
+                            <div class="lyric-line lyric-active my-4 scale-105 origin-left">
+                                ${parts[0]} <span id="lyric-blank" class="lyric-blank bg-slate-900/50">...</span> ${parts[1] || ''}
+                            </div>
+                        `;
+                    } else {
+                        return `<div class="lyric-line lyric-inactive my-4 opacity-40">${parts[0]} ____ ${parts[1] || ''}</div>`;
+                    }
+                } else {
+                    return `<div class="lyric-line lyric-inactive my-4 opacity-40">${line.text}</div>`;
+                }
+            }).join('');
+
+            let optionsHtml = module.options.map(opt => `
+                <button onclick="selectLyricOption('${opt}')" class="option-pill" id="opt-${opt}">
+                    ${opt}
+                </button>
+            `).join('');
+
+            content.innerHTML = `
+                <div class="w-full max-w-4xl mx-auto flex flex-col h-full animate-fade-in pt-6">
+                    <p class="text-miley-rose text-sm font-bold uppercase tracking-widest mb-8"><i class="fa-solid fa-volume-high mr-2 text-miley-rose"></i> Listen and complete</p>
+                    <div class="flex-grow flex flex-col justify-center">
+                        ${lyricsHtml}
+                    </div>
+                    
+                    <div class="mt-auto pt-10 pb-4 flex flex-col items-center gap-8 bg-gradient-to-t from-[var(--lyric-bg)] to-transparent">
+                        <div class="flex flex-wrap justify-center gap-4">
+                            ${optionsHtml}
+                        </div>
+                        <button id="btn-confirm-lyrics" onclick="confirmLyrics()" disabled class="btn-confirm-glow animate-pulse-rose-glow">
+                            <i class="fa-solid fa-check-double"></i> Confirm Word
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectLyricOption(word) {
+            selectedLyricWord = word;
+            const blank = document.getElementById('lyric-blank');
+            blank.innerText = word;
+            blank.classList.add('filled', 'bg-transparent');
+            blank.classList.remove('bg-slate-900/50');
+            
+            const module = modules[currentModuleIndex];
+            module.options.forEach(opt => {
+                const el = document.getElementById(`opt-${opt}`);
+                if(el) el.classList.remove('selected');
+            });
+            document.getElementById(`opt-${word}`).classList.add('selected');
+            
+            document.getElementById('btn-confirm-lyrics').disabled = false;
+        }
+
+        function confirmLyrics() {
+            const module = modules[currentModuleIndex];
+            const activeLine = module.lines[currentLyricLineIndex];
+            
+            if (selectedLyricWord === activeLine.target) {
+                document.getElementById('lyric-blank').classList.add('bg-success-glow');
+                document.getElementById(`opt-${selectedLyricWord}`).classList.add('bg-success-glow');
+                
+                showFeedback("success", "Correct! You completed the verse.", "advanceLyrics()");
+            } else {
+                showFeedback("error", "Not quite right. Try again.");
+                setTimeout(hideFeedback, 3000); 
+            }
+        }
+
+        function advanceLyrics() {
+            hideFeedback();
+            const module = modules[currentModuleIndex];
+            const activeLine = module.lines[currentLyricLineIndex];
+            activeLine.solved = true;
+            renderSpotifyLyrics(module); 
+        }
+
+        // --- CAPSULE TYPE: QUIZ ---
+        function renderQuiz(module) {
+            let optionsHtml = module.options.map((opt, i) => `
+                <div onclick="selectQuizOption(${i})" class="bg-slate-900/60 backdrop-blur-sm hover:bg-slate-800 border border-slate-700 hover:border-miley-rose rounded-xl p-6 cursor-pointer transition-all duration-300 group flex items-center justify-between shadow-lg" id="quiz-opt-${i}">
+                    <p class="text-white text-xl font-bold group-hover:text-miley-rose transition-colors">${opt.text}</p>
+                    <div class="w-6 h-6 rounded-full border-2 border-slate-500 group-hover:border-miley-rose flex items-center justify-center">
+                        <div class="w-3 h-3 rounded-full bg-miley-rose opacity-0 transition-opacity" id="quiz-dot-${i}"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('exercise-content').innerHTML = `
+                <div class="w-full max-w-3xl mx-auto mt-16 animate-fade-in flex flex-col h-full">
+                    <div class="text-center mb-16">
+                        <div class="w-20 h-20 bg-black/60 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg border border-rose-500/30">
+                            <i class="fa-solid ${module.icon} text-4xl text-miley-rose"></i>
+                        </div>
+                        <h3 class="text-3xl md:text-4xl font-black text-white leading-tight">${module.question}</h3>
+                    </div>
+                    
+                    <div class="space-y-4 w-full" id="quiz-options-container">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectQuizOption(index) {
+            const module = modules[currentModuleIndex];
+            const option = module.options[index];
+            const container = document.getElementById('quiz-options-container');
+            
+            container.style.pointerEvents = 'none';
+            
+            const selectedEl = document.getElementById(`quiz-opt-${index}`);
+            const dot = document.getElementById(`quiz-dot-${index}`);
+            
+            dot.style.opacity = '1';
+
+            if (option.correct) {
+                selectedEl.classList.add('bg-success-glow'); 
+                showFeedback("success", "Excellent! That is exactly right.", "finishModule()");
+            } else {
+                selectedEl.classList.add('bg-error-glow');
+                dot.classList.replace('bg-miley-rose', 'bg-white');
+                selectedEl.querySelector('.border-2').classList.replace('group-hover:border-miley-rose', 'border-white');
+                
+                showFeedback("error", "Not quite. Think about the rule and try again.");
+                
+                setTimeout(() => {
+                    hideFeedback();
+                    container.style.pointerEvents = 'auto';
+                    selectedEl.classList.remove('bg-error-glow');
+                    dot.classList.replace('bg-white', 'bg-miley-rose');
+                    dot.style.opacity = '0';
+                    selectedEl.querySelector('.border-2').classList.replace('border-white', 'group-hover:border-miley-rose');
+                }, 3000);
+            }
+        }
+
+        // --- CAPSULE TYPE: SPEAKING ARENA ---
+        function renderArena(module) {
+            let startersHtml = module.starters.map(s => `
+                <div class="bg-black/60 border-l-4 border-miley-rose p-4 rounded-r-lg shadow-[0_4px_15px_rgba(0,0,0,0.5)] hover:bg-black/80 transition-colors">
+                    <p class="text-white font-bold italic text-lg">"${s}"</p>
+                </div>
+            `).join('');
+
+            document.getElementById('exercise-content').innerHTML = `
+                <div class="w-full max-w-6xl mx-auto mt-4 animate-fade-in flex flex-col h-full">
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 flex-grow">
+                        <!-- Challenge Prompt Side -->
+                        <div class="bg-slate-900/80 p-8 md:p-10 rounded-2xl border border-rose-500/20 relative flex flex-col justify-center shadow-xl backdrop-blur-md">
+                            <div class="absolute -top-4 left-8 bg-slate-800 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg border border-slate-600">A1 Speaking Prompt</div>
+                            
+                            <div class="w-20 h-20 bg-black/80 rounded-full flex items-center justify-center mb-8 mx-auto relative border border-rose-500/30 shadow-inner">
+                                <i class="fa-solid fa-microphone-lines text-3xl text-miley-rose animate-pulse"></i>
+                            </div>
+
+                            <p class="text-white text-3xl md:text-4xl font-black italic leading-tight text-center mb-8 tracking-tighter drop-shadow-lg">"${module.prompt}"</p>
+                            
+                            <div class="mt-auto p-5 bg-black/60 border border-slate-700 rounded-xl">
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2"><i class="fa-solid fa-crosshairs text-miley-rose mr-2"></i> Goal</p>
+                                <p class="text-sm text-slate-300 font-medium leading-relaxed">${module.director}</p>
+                            </div>
+                        </div>
+
+                        <!-- Student Recording Side -->
+                        <div class="flex flex-col justify-center gap-6 transition-all duration-500 bg-black/40 p-8 md:p-10 rounded-2xl border border-slate-800 backdrop-blur-sm" id="podcast-student-side">
+                            <div class="flex items-center gap-3 mb-2 bg-slate-900 w-max px-4 py-2 rounded-full border border-slate-700">
+                                <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>
+                                <p class="text-xs text-slate-300 font-bold uppercase tracking-widest">Speak Out Loud</p>
+                            </div>
+                            
+                            <p class="text-slate-400 text-sm mb-2 leading-relaxed">Use one of these <span class="text-white font-bold border-b border-miley-rose pb-0.5">Speaking Starters</span> to structure your response.</p>
+                            
+                            <div class="space-y-3 mb-6 flex-grow flex flex-col justify-center">
+                                ${startersHtml}
+                            </div>
+
+                            <button onclick="finishPodcastSpeaking()" class="btn-confirm-glow animate-pulse-rose-glow w-full justify-center py-5 text-lg shadow-xl mt-auto">
+                                <i class="fa-solid fa-microphone text-xl"></i> I'm Done Speaking
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function finishPodcastSpeaking() {
+            const studentSide = document.getElementById('podcast-student-side');
+            studentSide.classList.add('bg-success-glow');
+            studentSide.classList.remove('bg-black/40', 'border-slate-800');
+            
+            const btn = studentSide.querySelector('button');
+            btn.innerHTML = `<i class="fa-solid fa-check text-2xl"></i> Recorded!`;
+            btn.classList.remove('bg-miley-rose', 'animate-pulse-rose-glow');
+            btn.classList.add('bg-black', 'text-white');
+            
+            showFeedback("success", "Great speaking practice! Your ideas are excellent.", "finishModule()");
+        }
+
+        // --- CAPSULE COMPLETION ---
+        function finishModule() {
+            hideFeedback();
+            const isLast = currentModuleIndex + 1 >= modules.length;
+            const btnText = isLast ? "Finish Masterclass" : "Next Capsule <i class='fa-solid fa-forward-step ml-2'></i>";
+            const btnAction = isLast ? "closeExercise()" : "nextModule()";
+
+            document.getElementById('exercise-content').innerHTML = `
+                <div class="text-center animate-fade-in flex flex-col items-center justify-center h-full">
+                    <div class="w-28 h-28 bg-emerald-500 rounded-full flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(16,185,129,0.5)]">
+                        <i class="fa-solid fa-check text-6xl text-black"></i>
+                    </div>
+                    <h2 class="text-4xl md:text-6xl font-black text-white mb-4 tracking-tighter">Capsule Complete</h2>
+                    <p class="text-lg text-slate-400 mb-12 max-w-md mx-auto">You've successfully mastered this Miley Cyrus (A1) module.</p>
+                    <button onclick="${btnAction}" class="btn-confirm-glow shadow-xl px-12 py-5 hover:scale-105 transition-transform" style="background-color: #10b981; color: black;">
+                        ${btnText}
+                    </button>
+                </div>
+            `;
+            
+            modules[currentModuleIndex].completed = true;
+            renderCapsules(); // Update the background grid
+        }
+
+        // --- FEEDBACK SYSTEM ---
+        function showFeedback(type, message, okAction = null) {
+            const bar = document.getElementById('feedback-bar');
+            
+            let bgClass = "bg-emerald-500 text-black border-emerald-500";
+            let icon = "fa-circle-check";
+            let actionBtn = "";
+            
+            if (type === "error") { 
+                bgClass = "bg-red-600 text-white border-red-500"; 
+                icon = "fa-triangle-exclamation"; 
+            }
+            if (type === "warning") { 
+                bgClass = "bg-yellow-500 text-black border-yellow-400"; 
+                icon = "fa-circle-info"; 
+            }
+
+            if (okAction) {
+                actionBtn = `<button onclick="${okAction}" class="ml-auto bg-black text-white px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform uppercase tracking-widest text-sm shadow-xl border border-white/20">OK <i class="fa-solid fa-arrow-right ml-2"></i></button>`;
+            }
+            
+            bar.className = `absolute bottom-8 left-1/2 transform -translate-x-1/2 w-[90%] max-w-3xl py-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-50 flex items-center justify-between px-8 transition-all duration-500 cubic-bezier(0.175, 0.885, 0.32, 1.275) border-2 opacity-100 translate-y-0 ${bgClass}`;
+            
+            bar.innerHTML = `
+                <div class="flex items-center justify-start gap-5">
+                    <i class="fa-solid ${icon} text-3xl drop-shadow-md"></i>
+                    <h4 class="text-lg font-bold tracking-wide">${message}</h4>
+                </div>
+                ${actionBtn}
+            `;
+        }
+
+        function hideFeedback() {
+            const bar = document.getElementById('feedback-bar');
+            bar.classList.remove('opacity-100', 'translate-y-0');
+            bar.classList.add('opacity-0', 'translate-y-12', 'pointer-events-none');
+        }
+
+        window.onload = () => { 
+            renderTabs();
+            renderCapsules(); 
+        };
+    </script>
+</body>
+</html>
